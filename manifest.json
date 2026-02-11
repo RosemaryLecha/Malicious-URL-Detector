@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Malicious URL Detector",
+  "version": "1.0",
+  "description": "Detects and warns about potentially malicious URLs in real-time",
+  
+  "permissions": [
+    "tabs",
+    "webNavigation",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

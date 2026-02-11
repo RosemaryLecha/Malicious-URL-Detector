@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malicious URL Detector</title>
+  <style>
+    /* ==========================================
+       GENERAL STYLING
+       ========================================== */
+    
+    body {
+      width: 350px;
+      min-height: 400px;
+      padding: 0;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .container {
+      background: white;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    /* ==========================================
+       HEADER
+       ========================================== */
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .header h1 {
+      font-size: 20px;
+      color: #333;
+      margin: 10px 0 5px 0;
+      font-weight: 600;
+    }
+    
+    .header .shield-icon {
+      font-size: 48px;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      font-size: 13px;
+      color: #666;
+      margin: 5px 0;
+    }
+    
+    /* ==========================================
+       STATUS BOXES
+       ========================================== */
+    
+    .status-box {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid;
+    }
+    
+    .status-box.active {
+      background-color: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+    }
+    
+    .status-box.info {
+      background-color: #d1ecf1;
+      border-color: #17a2b8;
+      color: #0c5460;
+    }
+    
+    .status-box.warning {
+      background-color: #fff3cd;
+      border-color: #ffc107;
+      color: #856404;
+    }
+    
+    .status-box strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    
+    .status-box p {
+      margin: 5px 0 0 0;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    /* ==========================================
+       STATISTICS
+       ========================================== */
+    
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 15px 0;
+    }
+    
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .stat-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #667eea;
+      display: block;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    /* ==========================================
+       BUTTONS
+       ========================================== */
+    
+    .button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .button.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .button.secondary {
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #dee2e6;
+    }
+    
+    .button.secondary:hover {
+      background-color: #e9ecef;
+    }
+    
+    /* ==========================================
+       CURRENT PAGE DISPLAY
+       ========================================== */
+    
+    .current-page {
+      background-color: #f8f9fa;
+      padding: 12px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    
+    .current-page strong {
+      font-size: 12px;
+      color: #666;
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .current-page .url {
+      font-size: 13px;
+      color: #333;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+    }
+    
+    /* ==========================================
+       FOOTER
+       ========================================== */
+    
+    .footer {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #f0f0f0;
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+    }
+    
+    /* ==========================================
+       LOADING STATE
+       ========================================== */
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER SECTION -->
+    <div class="header">
+      <div class="shield-icon">🛡️</div>
+      <h1>URL Security Detector</h1>
+      <p>Real-time malicious website detection</p>
+    </div>
+    
+    <!-- STATUS: Extension Active -->
+    <div class="status-box active">
+      <strong>✅ Protection Active</strong>
+      <p>Monitoring all websites you visit for threats</p>
+    </div>
+    
+    <!-- STATISTICS -->
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-number" id="domainCount">-</span>
+        <span class="stat-label">Malicious Domains</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" id="threatsBlocked">0</span>
+        <span class="stat-label">Threats Blocked</span>
+      </div>
+    </div>
+    
+    <!-- CURRENT PAGE INFO -->
+    <div class="current-page" id="currentPageInfo">
+      <strong>Current Page:</strong>
+      <div class="url" id="currentUrl">Loading...</div>
+    </div>
+    
+    <!-- ACTION BUTTONS -->
+    <button class="button primary" id="checkCurrentBtn">
+      🔍 Check Current Page
+    </button>
+    
+    <button class="button secondary" id="viewListBtn">
+      📋 View Malicious List
+    </button>
+    
+    <!-- INFO BOX -->
+    <div class="status-box info">
+      <strong>ℹ️ How It Works</strong>
+      <p>We check every URL against a database of known malicious websites. If a threat is detected, you'll see an immediate warning.</p>
+    </div>
+    
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Malicious URL Detector v1.0</p>
+      <p>Built with ❤️ for browser security</p>
+    </div>
+  </div>
+  
+  <!-- Link to JavaScript file -->
+  <script src="popup.js"></script>
+</body>
+</html>
